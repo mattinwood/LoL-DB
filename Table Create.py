@@ -102,8 +102,12 @@ def createRawDB():
 
 def loaditems():
     input = []
-    items = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/item?itemListData=depth,gold,groups,tags&api_key=4571b727-d76d-4192-9c67-87c441da001c").json()
+    items = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/item?itemListData=depth,gold,groups,tags&api_key={key}".format(key=myKey)).json()
     for item in items['data']:
+        if item == '3462':
+            #Item 3462 for some reason doesn't contain normal values, so I cut it completely.
+            #I could have done this dynamically, but I hard coded because reasons.
+            continue
         try:
             input.append([items['data'][item]['id'], items['data'][item]['name'], items['data'][item]['gold']['total'],
                   items['data'][item]['gold']['base'], items['data'][item]['depth']])
@@ -124,7 +128,7 @@ def loaditems():
 
 
 def loadchamps():
-    champs = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=partype,tags&api_key=4571b727-d76d-4192-9c67-87c441da001c").json()
+    champs = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=partype,tags&api_key={key}".format(key=myKey)).json()
     input = []
     for champ in champs['data']:
         input.append([champs['data'][champ]['id'], champs['data'][champ]['name'], champs['data'][champ]['partype']])
@@ -139,7 +143,7 @@ def loadchamps():
 
 def loadspells():
     input = []
-    spells = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/summoner-spell?api_key=4571b727-d76d-4192-9c67-87c441da001c").json()
+    spells = requests.get("https://global.api.pvp.net/api/lol/static-data/na/v1.2/summoner-spell?api_key={key}".format(key=myKey)).json()
     for spell in spells['data']:
         input.append([spells['data'][spell]['id'],spells['data'][spell]['name']])
     c.executemany("INSERT INTO spells VALUES(?,?)", (input))
@@ -187,13 +191,12 @@ def reloadallstatic():
     loaditems()
     loadchamps()
 
-
-
+myKey = "YOUR-KEY-HERE"
 #Run/uncomment these first functions if creating the DB for the first time.
-# createRawDB()
-# loaditems()
-# loadchamps()
-# loadspells()
+createRawDB()
+loaditems()
+loadchamps()
+loadspells()
 
 #The reload function is for a DB that needs to refresh static data due to metagame changes,
 #new static data (items, spells), or changes to the same. Adds new champions as well.

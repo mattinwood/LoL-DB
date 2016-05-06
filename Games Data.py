@@ -269,7 +269,7 @@ class _tableData:
 ##########################################################################
 pp = pprint.PrettyPrinter(indent=4)
 #myKey should be your personal API key from Riot.
-myKey = "4571b727-d76d-4192-9c67-87c441da001c"
+myKey = "YOUR-KEY-HERE"
 
 #Bookkeeping to keep track of runtime. Size of Master and Challenger pools can force
 #the program to run for hours/days due to API limits.
